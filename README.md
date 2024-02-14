@@ -12,13 +12,13 @@ To create the custom policy, you need to follow the steps below:
 
 After custom policy was deployed, you can test the custom policy with the [SAML Test Service](https://samltestapp2.azurewebsites.net/).
 
-In the [policy](policy) folder are the final custom policy files. In order to use them, following placeholders needs to be replaced with actual values:
+In the [policy](policy) folder are the final custom policy files created following the steps above. In order to use them, following placeholders needs to be replaced with actual values:
 
 - `yourtenant.onmicrosoft.com` needs to be replaced with your actual tenant name
 - `B2CExtensionsAppAppId` and `B2CExtensionsAppObjectId` with values of b2c-extensions-app from App Registrations in Azure AD B2C
 - `ProxyIdentityExperienceFrameworkAppId` and `IdentityExperienceFrameworkAppId` with application ids of IdentityExperienceFramework and ProxyIdentityExperienceFramework applications from App Registrations in Azure AD B2C
 
-> **Note**: Custom claim (a.k.a extension attribute) is not created in the directory when it is defined. The first time the AAD technical profile persists the claim to the directory, it checks whether the custom claim exists. If it doesn't, it creates the custom claim.
+> **Note**: Custom claim (a.k.a. extension attribute) is not created in the directory when it is defined. The first time the AAD technical profile persists the claim to the directory, it checks whether the custom claim exists. If it doesn't, it creates the custom claim.
 
 > **Note**: Custom claims (a.k.a. extension attributes) are not visible within user properties in Azure AD B2C in Azure Portal. You can use [Microsoft Graph](https://learn.microsoft.com/en-us/graph/api/user-get?view=graph-rest-1.0&tabs=http) or [.NET Core console app](https://github.com/Azure-Samples/ms-identity-dotnetcore-b2c-account-management) to manage custom claims.
 
