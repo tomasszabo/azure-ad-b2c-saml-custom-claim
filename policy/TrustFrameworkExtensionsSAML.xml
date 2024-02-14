@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TrustFrameworkPolicy
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+  PolicySchemaVersion="0.3.0.0"
+  TenantId="yourtenant.onmicrosoft.com"
+  PolicyId="B2C_1A_TrustFrameworkExtensions_SAML"
+  PublicPolicyUri="http://yourtenant.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions_SAML">
+
+  <BasePolicy>
+    <TenantId>yourtenant.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
+  </BasePolicy>
+
+  <!-- Register a SAML application in Azure AD B2C - https://learn.microsoft.com/en-us/azure/active-directory-b2c/saml-service-provider?tabs=macos&pivots=b2c-custom-policy -->
+
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <ClaimType Id="extension_loyaltyId">
+        <DisplayName>Loyalty Identification</DisplayName>
+        <DataType>string</DataType>
+
+        <!-- Define claim name for different protocols - https://learn.microsoft.com/en-us/entra/identity-platform/optional-claims#directory-extension-formatting -->
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OAuth2" PartnerClaimType="extn.loyaltyId" />
+          <Protocol Name="OpenIdConnect" PartnerClaimType="extn.loyaltyId" />
+          <Protocol Name="SAML2"
+            PartnerClaimType="http://schemas.microsoft.com/identity/claims/extn.loyaltyId" />
+        </DefaultPartnerClaimTypes>
+        <UserHelpText>Your loyalty number from your membership card</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+    </ClaimsSchema>
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+
+    <ClaimsProvider>
+      <DisplayName>Token Issuer</DisplayName>
+      <TechnicalProfiles>
+
+        <!-- SAML Token Issuer technical profile -->
+        <TechnicalProfile Id="Saml2AssertionIssuer">
+          <DisplayName>Token Issuer</DisplayName>
+          <Protocol Name="SAML2" />
+          <OutputTokenFormat>SAML2</OutputTokenFormat>
+          <Metadata>
+            <Item Key="IssuerUri">https://issuerUriMyAppExpects</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="SamlAssertionSigning" StorageReferenceId="B2C_1A_SamlIdpCert" />
+            <Key Id="SamlMessageSigning" StorageReferenceId="B2C_1A_SamlIdpCert" />
+          </CryptographicKeys>
+          <InputClaims />
+          <OutputClaims />
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Saml-issuer" />
+        </TechnicalProfile>
+
+        <!-- Session management technical profile for SAML-based tokens -->
+        <TechnicalProfile Id="SM-Saml-issuer">
+          <DisplayName>Session Management Provider</DisplayName>
+          <Protocol Name="Proprietary"
+            Handler="Web.TPEngine.SSO.SamlSSOSessionProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+        </TechnicalProfile>
+
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Azure Active Directory</DisplayName>
+      <TechnicalProfiles>
+
+        <!-- Enable using of AD B2C extensions app to support cutom claims - https://learn.microsoft.com/en-us/azure/active-directory-b2c/user-flow-custom-attributes?pivots=b2c-custom-policy#azure-ad-b2c-extensions-app -->
+        <TechnicalProfile Id="AAD-Common">
+          <Metadata>
+            <!--Insert b2c-extensions-app application ID here, for example: 11111111-1111-1111-1111-111111111111-->
+            <Item Key="ClientId">B2CExtensionsAppAppId</Item>
+            <!--Insert b2c-extensions-app application ObjectId here, for example: 22222222-2222-2222-2222-222222222222-->
+            <Item Key="ApplicationObjectId">B2CExtensionsAppObjectId</Item>
+          </Metadata>
+        </TechnicalProfile>
+
+        <!-- Persist and read custom claims in different flows - https://learn.microsoft.com/en-us/azure/active-directory-b2c/configure-user-input?pivots=b2c-custom-policy#read-and-write-a-claim -->
+        <!-- Write data during a local account sign-up flow. -->
+        <TechnicalProfile Id="AAD-UserWriteUsingLogonEmail">
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </PersistedClaims>
+        </TechnicalProfile>
+
+        <!-- Write data during a federated account first-time sign-in flow. -->
+        <TechnicalProfile Id="AAD-UserWriteUsingAlternativeSecurityId">
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </PersistedClaims>
+        </TechnicalProfile>
+
+        <!-- Write data during edit profile flow. -->
+        <TechnicalProfile Id="AAD-UserWriteProfileUsingObjectId">
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </PersistedClaims>
+        </TechnicalProfile>
+
+        <!-- Read data after user resets the password. -->
+        <TechnicalProfile Id="AAD-UserReadUsingEmailAddress">
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </OutputClaims>
+        </TechnicalProfile>
+
+        <!-- Read data after user authenticates with a local account. -->
+        <TechnicalProfile Id="AAD-UserReadUsingObjectId">
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </OutputClaims>
+        </TechnicalProfile>
+
+        <!-- Read data after user authenticates with a federated account. -->
+        <TechnicalProfile Id="AAD-UserReadUsingAlternativeSecurityId">
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </OutputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Local Account SignIn</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="login-NonInteractive">
+          <Metadata>
+            <Item Key="client_id">ProxyIdentityExperienceFrameworkAppId</Item>
+            <Item Key="IdTokenAudience">IdentityExperienceFrameworkAppId</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="client_id"
+              DefaultValue="ProxyIdentityExperienceFrameworkAppId" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource"
+              DefaultValue="IdentityExperienceFrameworkAppId" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </OutputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Local Account</DisplayName>
+      <!-- Add custom attributes to sign up UI - https://learn.microsoft.com/en-us/azure/active-directory-b2c/configure-user-input?pivots=b2c-custom-policy#add-a-claim-to-the-user-interface -->
+      <TechnicalProfiles>
+        <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="Verified.Email"
+              Required="true" />
+            <OutputClaim ClaimTypeReferenceId="newPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="reenterPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            <OutputClaim ClaimTypeReferenceId="newUser" />
+
+            <!-- Optional claims, to be collected from the user -->
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surName" />
+
+            <!-- Custom claims -->
+            <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" Required="true" />
+          </OutputClaims>
+        </TechnicalProfile>        
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Self Asserted</DisplayName>
+      <TechnicalProfiles>
+        <!-- Collect custom attributes after sign up with federated account -->
+        <!--Federated account first-time sign-in page-->
+        <TechnicalProfile Id="SelfAsserted-Social">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </OutputClaims>
+        </TechnicalProfile>
+        <!--Edit profile page-->
+        <TechnicalProfile Id="SelfAsserted-ProfileUpdate">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" />
+          </OutputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Facebook</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="Facebook-OAUTH">
+          <Metadata>
+            <Item Key="client_id">facebook_clientid</Item>
+            <Item Key="scope">email public_profile</Item>
+            <Item Key="ClaimsEndpoint">
+              https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
+          </Metadata>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+  </ClaimsProviders>
+
+  <UserJourneys>
+    <UserJourney Id="SignUpOrSignInSAML">
+      <OrchestrationSteps>
+
+        <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp"
+          ContentDefinitionReferenceId="api.signuporsignin">
+          <ClaimsProviderSelections>
+            <!-- Disable social providers -->
+            <!-- <ClaimsProviderSelection TargetClaimsExchangeId="FacebookExchange" /> -->
+            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+          </ClaimsProviderSelections>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange"
+              TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Check if the user has selected to sign in using one of the social providers -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="FacebookExchange" TechnicalProfileReferenceId="Facebook-OAUTH" /> 
+            <ClaimsExchange Id="SignUpWithLogonEmailExchange"
+              TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- For social IDP authentication, attempt to find the user account in the directory. -->
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>authenticationSource</Value>
+              <Value>localAccountAuthentication</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadUsingAlternativeSecurityId"
+              TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId-NoError" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Show self-asserted page only if the directory does not have the user account already
+      (i.e. we do not have an objectId). 
+          This can only happen when authentication happened using a social IDP. If local account was created
+      or authentication done
+          using ESTS in step 2, then an user account must exist in the directory by this time. -->
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAsserted-Social"
+              TechnicalProfileReferenceId="SelfAsserted-Social" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- This step reads any user attributes that we may not have received when authenticating
+      using ESTS so they can be sent 
+          in the token. -->
+        <OrchestrationStep Order="5" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>authenticationSource</Value>
+              <Value>socialIdpAuthentication</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadWithObjectId"
+              TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <!-- The previous step (SelfAsserted-Social) could have been skipped if there were no
+      attributes to collect 
+             from the user. So, in that case, create the user in the directory if one does not already exist 
+             (verified using objectId which would be set from the last step if account was created in the
+      directory. -->
+        <OrchestrationStep Order="6" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserWrite"
+              TechnicalProfileReferenceId="AAD-UserWriteUsingAlternativeSecurityId" /> 
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="7" Type="SendClaims"
+          CpimIssuerTechnicalProfileReferenceId="Saml2AssertionIssuer" />
+
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+  </UserJourneys>
+
+</TrustFrameworkPolicy>
