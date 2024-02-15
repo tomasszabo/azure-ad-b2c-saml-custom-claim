@@ -22,6 +22,29 @@ In the [policy](policy) folder are the final custom policy files created followi
 
 > **Note**: Custom claims (a.k.a. extension attributes) are not visible within user properties in Azure AD B2C in Azure Portal. You can use [Microsoft Graph](https://learn.microsoft.com/en-us/graph/api/user-get?view=graph-rest-1.0&tabs=http) or [.NET Core console app](https://github.com/Azure-Samples/ms-identity-dotnetcore-b2c-account-management) to manage custom claims.
 
+## Manage custom claims with Microsoft Graph
+
+To get user custom claims with Microsoft Graph, you can use the following endpoint:
+
+```http
+GET https://graph.microsoft.com/beta/users/{id | userPrincipalName}
+```
+
+To modify user custom claims with Microsoft Graph, you can use the following endpoint:
+
+```http
+PATCH https://graph.microsoft.com/beta/users/{id | userPrincipalName}
+```
+
+where body is following JSON:
+
+```json
+{
+	"extension_{appId}_customClaim": "value"
+}
+```
+> **Note**: Replace `{appId}` with the application id of the b2c-extensions-app from App Registrations in Azure AD B2C. Application id must not contain `-` in extension name.
+
 ## Resources
 
 - [SAML Test Service](https://samltestapp2.azurewebsites.net/)

@@ -84,8 +84,12 @@
         <!-- Persist and read custom claims in different flows - https://learn.microsoft.com/en-us/azure/active-directory-b2c/configure-user-input?pivots=b2c-custom-policy#read-and-write-a-claim -->
         <!-- Write data during a local account sign-up flow. -->
         <TechnicalProfile Id="AAD-UserWriteUsingLogonEmail">
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="CreateOtherMailsFromEmail" />
+          </InputClaimsTransformations>
           <PersistedClaims>
             <PersistedClaim ClaimTypeReferenceId="extension_loyaltyId" />
+            <PersistedClaim ClaimTypeReferenceId="otherMails" />
           </PersistedClaims>
         </TechnicalProfile>
 

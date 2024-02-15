@@ -23,13 +23,14 @@
         <OutputClaim ClaimTypeReferenceId="givenName" />
         <OutputClaim ClaimTypeReferenceId="surname" />
         <OutputClaim ClaimTypeReferenceId="email" DefaultValue="" />
+        <OutputClaim ClaimTypeReferenceId="otherMails" PartnerClaimType="emails" />
         <OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="" />
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="objectId" />
 
         <!-- Include custom claims in token - https://learn.microsoft.com/en-us/azure/active-directory-b2c/configure-user-input?pivots=b2c-custom-policy#include-a-claim-in-the-token -->
         <OutputClaim ClaimTypeReferenceId="extension_loyaltyId" DefaultValue="" />
       </OutputClaims>
-      <SubjectNamingInfo ClaimType="objectId" ExcludeAsClaim="true" />
+      <SubjectNamingInfo ClaimType="objectId" ExcludeAsClaim="false" />
     </TechnicalProfile>
   </RelyingParty>
 </TrustFrameworkPolicy>
