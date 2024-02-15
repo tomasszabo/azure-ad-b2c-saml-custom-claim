@@ -22,6 +22,8 @@ In the [policy](policy) folder are the final custom policy files created followi
 
 > **Note**: Custom claims (a.k.a. extension attributes) are not visible within user properties in Azure AD B2C in Azure Portal. You can use [Microsoft Graph](https://learn.microsoft.com/en-us/graph/api/user-get?view=graph-rest-1.0&tabs=http) or [.NET Core console app](https://github.com/Azure-Samples/ms-identity-dotnetcore-b2c-account-management) to manage custom claims.
 
+> **Note**: Existing user profile attributes (e.g. `city`) can be used only if they are listed in the [documentation](https://learn.microsoft.com/en-us/azure/active-directory-b2c/user-profile-attributes#microsoft-entra-user-resource-type). Other attributes (e.g. `employeeId`) visible in user properties in Azure AD B2C user blade but not listen in [documentation](https://learn.microsoft.com/en-us/azure/active-directory-b2c/user-profile-attributes#microsoft-entra-user-resource-type) are not supported.
+
 ## Manage custom claims with Microsoft Graph
 
 To get user custom claims with Microsoft Graph, you can use the following endpoint:
@@ -51,6 +53,7 @@ where body is following JSON:
 - [Claim names for different protocols](https://learn.microsoft.com/en-us/entra/identity-platform/optional-claims#directory-extension-formatting)
 - [Manage Azure AD B2C with Microsoft Graph](https://learn.microsoft.com/en-gb/azure/active-directory-b2c/microsoft-graph-operations)
 - [Azure AD B2C user account management with .NET Core and Microsoft Graph](https://github.com/Azure-Samples/ms-identity-dotnetcore-b2c-account-management)
+- [Azure AD B2C User profile attributes](https://learn.microsoft.com/en-us/azure/active-directory-b2c/user-profile-attributes#microsoft-entra-user-resource-type)
 
 ## License
 
