@@ -1,4 +1,4 @@
-# Azure AD B2C custom policy with SAML2 token and custom claims
+# Azure AD B2C custom policy with SAML2 token, custom claims, forgot password and UI customizations
 
 This is an example of Azure AD B2C custom policy with SAML2 token and custom claims. The custom policy is based on the starter pack `SocialAndLocalAccounts` and the custom policy is extended to include SAML2 token and custom claim.
 
