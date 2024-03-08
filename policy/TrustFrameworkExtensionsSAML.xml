@@ -93,7 +93,7 @@
       <!-- Customize Sign-in page -->
       <ContentDefinition Id="api.signuporsignin">
         <!-- Define absolute URL for custom HTML template -->
-        <LoadUri>https://sombreritastorage01.blob.core.windows.net/$web/unified.html</LoadUri>
+        <LoadUri>https://login.microsoftonline.com/unified.html</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:unifiedssp:2.1.17</DataUri>
         <Metadata>
@@ -103,7 +103,7 @@
 
       <!-- Customize Reset passord page-->
       <ContentDefinition Id="api.localaccountpasswordreset">
-        <LoadUri>https://sombreritastorage01.blob.core.windows.net/$web/selfAsserted.html</LoadUri>
+        <LoadUri>https://login.microsoftonline.com/selfAsserted.html</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.29</DataUri>
         <Metadata>

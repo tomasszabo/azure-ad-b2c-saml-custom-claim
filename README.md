@@ -15,7 +15,7 @@ This is an example of Azure AD B2C custom policy with SAML2 token and custom cla
 
 In the [html_templates](html_templates) folder are the final HTML templates. In order to use them, following placeholders in HTML files needs to be replaced with actual values:
 
-- `https://login.microsoftonline.com/` needs to be replaces with your actual hosting URL (e.g. `https://yourstorageaccount.blob.core.windows.net/yourcontainer/`). The URL must be publicly available and CORS support must be enabled.
+- `https://login.microsoftonline.com/` needs to be replaced with your actual hosting URL (e.g. `https://yourstorageaccount.blob.core.windows.net/yourcontainer/`). The URL must be publicly available and CORS support must be enabled.
 
 Afterwards upload customized HTML template to your publicly available server with CORS support (e.g. [Host Azure B2C Templates in Azure Blob Storage](https://learn.microsoft.com/en-us/azure/active-directory-b2c/customize-ui-with-html?pivots=b2c-custom-policy#2-create-an-azure-blob-storage-account)).
 
@@ -33,6 +33,7 @@ In the [policy](policy) folder are the final custom policy files created followi
 - `yourtenant.onmicrosoft.com` needs to be replaced with your actual tenant name
 - `B2CExtensionsAppAppId` and `B2CExtensionsAppObjectId` with values of b2c-extensions-app from App Registrations in Azure AD B2C
 - `ProxyIdentityExperienceFrameworkAppId` and `IdentityExperienceFrameworkAppId` with application ids of IdentityExperienceFramework and ProxyIdentityExperienceFramework applications from App Registrations in Azure AD B2C
+- `https://login.microsoftonline.com/` needs to be replaced with your actual hosting URL (e.g. `https://yourstorageaccount.blob.core.windows.net/yourcontainer/`). The URL must be publicly available and CORS support must be enabled.
 
 After custom policy was deployed, you can test the custom policy with the [SAML Test Service](https://samltestapp2.azurewebsites.net/).
 
